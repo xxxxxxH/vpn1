@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">Private VPN Master</string>
+
+    <string name="base_url">https://junsho.space/</string>
+
+    <!-- //real-->
+
+
+    <!-- <string name="lovin_app_key">XPxZx2V96_iG7pvM4Tnv9Ci2gnTcttWt7PvgH4gkf-2zoyye4GosxpTV1dPNCvzgQPmf6oQpX9k-pQriMIx7HR</string>-->
+
+
+    <!-- <string name="lovin_insert_ad_id">4c3cc127de72d994</string>-->
+
+
+    <!-- <string name="lovin_native_ad_id">d72f3afe80b22e8b</string>-->
+
+
+    <!-- <string name="lovin_banner_ad_id">b5ecca173a0d6331</string>-->
+
+
+    <!-- <string name="top_on_app_id">a622729cd54509</string>-->
+
+
+    <!-- <string name="top_on_app_key">5ce813fb93a147bb3e537c1239e4a932</string>-->
+
+
+    <!-- <string name="top_on_open_ad_id">b622729db29de2</string>-->
+
+
+    <!-- <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>-->
+
+
+    <!-- //test-->
+
+
+    <!-- //使用lovin测试id 需要把applicationId改成nuuu.huju.bbbn-->
+
+
+    <string name="lovin_app_key">XPxZx2V96_iG7pvM4Tnv9Ci2gnTcttWt7PvgH4gkf-2zoyye4GosxpTV1dPNCvzgQPmf6oQpX9k-pQriMIx7HR</string>
+
+    <string name="lovin_insert_ad_id">b7af8425c9c261ff</string>
+
+    <string name="lovin_native_ad_id">209a5d5446e908dc</string>
+
+    <string name="lovin_banner_ad_id">1009498d83765a01</string>
+
+    <string name="top_on_app_id">a5aa1f9deda26d</string>
+
+    <string name="top_on_app_key">4f7b9ac17decb9babec83aac078742c7</string>
+
+    <string name="top_on_open_ad_id">b5ee8ae8611366</string>
+
+    <string name="admob_id">ca-app-pub-3940256099942544~3347511713</string>
+
+</resources>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/activity_setting_bg"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/activitySettingIvBack"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="44dp"
+        android:scaleType="center"
+        android:src="@drawable/activity_setting_back" />
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="34dp"
+        android:scaleType="center"
+        android:src="@drawable/activity_setting_icon" />
+
+    <FrameLayout
+        android:id="@+id/activitySettingFlRate"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/activity_setting_item_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/activity_setting_rate"
+            android:drawablePadding="40dp"
+            android:text="Rate Us"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/activity_setting_item_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/activity_setting_about"
+            android:drawablePadding="40dp"
+            android:text="About Us"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/activity_setting_item_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/activity_setting_share"
+            android:drawablePadding="40dp"
+            android:text="Tell Your Friends"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+    </FrameLayout>
+
+</LinearLayout>

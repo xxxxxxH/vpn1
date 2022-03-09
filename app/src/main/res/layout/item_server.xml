@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/itemServerIvDot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/activity_server_dot" />
+
+    <ImageView
+        android:id="@+id/itemServerIvIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="28dp"
+        android:src="@drawable/activity_server_usa" />
+
+    <TextView
+        android:id="@+id/itemServerTvName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:paddingStart="42dp"
+        android:textColor="@android:color/white"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/itemServerIvSignal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="38dp"
+        android:src="@drawable/activity_server_signal_0" />
+
+</LinearLayout>
