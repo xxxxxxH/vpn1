@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1C1D21"
     android:orientation="vertical">
 
-    <include layout="@layout/layout_main_top" />
-
-    <win.enlarge.zoovpn.view.lovin.LovinNativeAdView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="#A6A6A6" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical">
 
-    <include layout="@layout/layout_main_content" />
+        <include layout="@layout/layout_main_top" />
+
+        <win.enlarge.zoovpn.view.lovin.LovinNativeAdView
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#A6A6A6" />
+
+        <include layout="@layout/layout_main_content" />
+
+
+    </LinearLayout>
 
     <win.enlarge.zoovpn.view.lovin.LovinBannerAdView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:background="#A6A6A6" />
-</LinearLayout>
+</RelativeLayout>

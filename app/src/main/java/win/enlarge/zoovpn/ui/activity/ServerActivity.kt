@@ -1,82 +1,56 @@
 package win.enlarge.zoovpn.ui.activity
 
-import androidx.core.view.isInvisible
+import android.annotation.SuppressLint
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_server.*
-import kotlinx.android.synthetic.main.item_server.*
+import com.tencent.mmkv.MMKV
+import kotlinx.android.synthetic.main.activity_loaction.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
-import win.enlarge.zoovpn.BusServerEvent
-import win.enlarge.zoovpn.Constant
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
-import win.enlarge.zoovpn.base.BaseAdapter
-import win.enlarge.zoovpn.pojo.ServerPojo
-import win.enlarge.zoovpn.utils.click
-import win.enlarge.zoovpn.utils.serverList
+import win.enlarge.zoovpn.event.MessageEvent
+import win.enlarge.zoovpn.holder.LocationHolder
+import win.enlarge.zoovpn.pojo.ResourceEntity
+import win.enlarge.zoovpn.utils.ResourceManager
+import win.enlarge.zoovpn.utils.mmkv
+import zhan.auto_adapter.AutoRecyclerAdapter
 
-class ServerActivity : BaseActivity(R.layout.activity_server) {
+class ServerActivity : BaseActivity(R.layout.activity_loaction) {
 
+    var data: ArrayList<ResourceEntity>? = null
 
-    private var currentServerPojo: ServerPojo? = null
-
+    @SuppressLint("NotifyDataSetChanged")
     override fun onConvert() {
-        (intent?.getSerializableExtra(Constant.KEY_COMMON_ARGUMENT) as? ServerPojo)?.let {
-            currentServerPojo = it
-        }
-        activityServerIvBack.click {
-            onBackPressed()
-        }
-        val data = serverList.toMutableList().apply {
-            forEach {
-                if (it == currentServerPojo) {
-                    it.isSelect = true
-                }
-            }
-        }
-        activityServerRv.apply {
-            layoutManager = LinearLayoutManager(this@ServerActivity)
-            adapter = object : BaseAdapter<ServerPojo>(data) {
-                override val layoutId: Int
-                    get() = R.layout.item_server
-
-                override fun onConvert(holder: BaseViewHolder, item: ServerPojo, position: Int) {
-                    holder.itemServerIvDot.isInvisible = !item.isSelect
-                    holder.itemServerIvIcon.setImageResource(item.icon)
-                    holder.itemServerTvName.text = item.name
-                    holder.itemServerIvSignal.setImageResource(item.signal)
-                }
-            }.apply {
-                setOnItemClickListener {
-                    if (!it.isSelect) {
-                        selectServerPojo = it
-                        serverList.forEach {
-                            it.isSelect = false
-                        }
-                        it.isSelect = true
-                        notifyDataSetChanged()
-                        val a = showInsertAd()
-                        if (a) {
-
-                        } else {
-                            sendEventBus()
-                        }
-                    }
-                }
+        EventBus.getDefault().register(this)
+        val adapter = AutoRecyclerAdapter()
+        recycler.adapter = adapter
+        recycler.layoutManager = LinearLayoutManager(this)
+        adapter.setHolder(LocationHolder::class.java, R.layout.layout_item_location)
+        lifecycleScope.launch(Dispatchers.IO) {
+            data = ResourceManager.getResource()
+            withContext(Dispatchers.Main) {
+                adapter.setDataList(LocationHolder::class.java, data).notifyDataSetChanged()
             }
         }
     }
 
-    private var selectServerPojo: ServerPojo? = null
-
-    private fun sendEventBus() {
-        selectServerPojo?.let {
-            EventBus.getDefault().post(BusServerEvent(it))
-            onBackPressed()
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(e: MessageEvent) {
+        val msg = e.getMessage()
+        if (msg[0] == "itemClick") {
+            val entity = msg[1] as ResourceEntity
+            MMKV.defaultMMKV().encode("location",entity)
+            EventBus.getDefault().post(MessageEvent("location", entity))
         }
     }
 
-    override fun onInterstitialAdHidden() {
-        super.onInterstitialAdHidden()
-        sendEventBus()
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 }

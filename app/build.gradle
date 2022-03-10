@@ -112,5 +112,17 @@ dependencies {
 
     //1005网络请求
     implementation 'org.xutils:xutils:3.9.0'
+    //数据存储
+    implementation 'com.github.GrenderG:Prefs:1.3'
+    //圆角
+    implementation 'com.github.SheHuan:NiceImageView:1.0.5'
+    //Toast
+    implementation 'com.github.GrenderG:Toasty:1.5.2'
+    //Adapter
+    implementation 'com.github.teambition:AutoRecyclerAdapter:v1.5'
+    //Dialog
+    implementation 'com.flyco.dialog:FlycoDialog_Lib:1.2.2@aar'
+    implementation 'com.flyco.animation:FlycoAnimation_Lib:1.0.0@aar'
+    implementation 'com.nineoldandroids:library:2.4.0'
 
 }

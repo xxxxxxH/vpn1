@@ -2,6 +2,7 @@ package win.enlarge.zoovpn
 
 import android.content.Context
 import androidx.multidex.MultiDexApplication
+import es.dmoral.toasty.Toasty
 import org.xutils.x
 
 

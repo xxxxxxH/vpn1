@@ -15,6 +15,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/mainOptionRl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -22,7 +23,6 @@
         android:background="@drawable/main_status_bg">
 
         <TextView
-            android:id="@+id/mainOptionTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
