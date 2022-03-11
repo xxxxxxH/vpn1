@@ -116,6 +116,7 @@ dependencies {
     implementation 'com.github.GrenderG:Prefs:1.3'
     //圆角
     implementation 'com.github.SheHuan:NiceImageView:1.0.5'
+    implementation 'com.github.open-android:RoundedImageView:v1.0.0'
     //Toast
     implementation 'com.github.GrenderG:Toasty:1.5.2'
     //Adapter

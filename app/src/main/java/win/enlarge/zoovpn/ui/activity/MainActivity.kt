@@ -95,7 +95,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
         entity.apply {
             mainLocationTv.text = name
             mainLocationFlagIv.visibility = View.VISIBLE
-            Glide.with(this@MainActivity).load(id).into(mainLocationFlagIv)
+            mainLocationFlagIv.setImageResource(id)
         }
     }
 

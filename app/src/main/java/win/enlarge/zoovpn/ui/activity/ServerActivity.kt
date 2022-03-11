@@ -31,12 +31,8 @@ class ServerActivity : BaseActivity(R.layout.activity_loaction) {
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(this)
         adapter.setHolder(LocationHolder::class.java, R.layout.layout_item_location)
-        lifecycleScope.launch(Dispatchers.IO) {
-            data = ResourceManager.getResource()
-            withContext(Dispatchers.Main) {
-                adapter.setDataList(LocationHolder::class.java, data).notifyDataSetChanged()
-            }
-        }
+        data = ResourceManager.getResource()
+        adapter.setDataList(LocationHolder::class.java, data).notifyDataSetChanged()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

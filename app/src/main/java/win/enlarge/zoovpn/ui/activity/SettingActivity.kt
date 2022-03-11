@@ -8,9 +8,14 @@ import kotlinx.android.synthetic.main.activity_setting_new.*
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
 import win.enlarge.zoovpn.ui.dialog.RateDialog
+import win.enlarge.zoovpn.ui.dialog.RateUsDialog
 import win.enlarge.zoovpn.utils.click
 
 class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClickListener{
+    
+    private val rateDialog by lazy {
+        RateUsDialog(this)
+    }
 
     override fun onConvert() {
         settingCloseIv.setOnClickListener(this)
@@ -25,7 +30,7 @@ class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClic
 
             }
             R.id.settingRateRl -> {
-
+                rateDialog.show()
             }
             R.id.settingAboutRl -> {
 
