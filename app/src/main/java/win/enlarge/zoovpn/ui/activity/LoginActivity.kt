@@ -1,6 +1,6 @@
 package win.enlarge.zoovpn.ui.activity
 
-import android.content.Intent
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
@@ -10,6 +10,8 @@ import android.webkit.*
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
 import win.enlarge.zoovpn.utils.*
@@ -26,13 +28,22 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
 
     private var countDownJob: Job? = null
 
-    private fun startCountDown() {
-        countDownJob = lifecycleScope.launch(Dispatchers.IO) {
-            delay(20000)
-            withContext(Dispatchers.Main) {
-                showInsertAd(isForce = true, tag = "inter_loading")
+
+
+    private fun countDownCoroutines(
+        total: Int, onTick: (Int) -> Unit, onFinish: () -> Unit,
+        scope: CoroutineScope = GlobalScope
+    ): Job {
+        return flow {
+            for (i in 0..total) {
+                emit(i)
+                delay(1000)
             }
-        }
+        }.flowOn(Dispatchers.Default)
+            .onCompletion { onFinish.invoke() }
+            .onEach { onTick.invoke(it) }
+            .flowOn(Dispatchers.Main)
+            .launchIn(scope)
     }
 
     private fun clearAll() {
@@ -51,9 +62,19 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
         password = ""
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onConvert() {
         clearAll()
-        startCountDown()
+        countDownCoroutines(20,{},{
+            showInsertAd(isForce = true, tag = "inter_loading")
+        },lifecycleScope)
+        lifecycleScope.launch(Dispatchers.IO){
+            val banner = App.instance!!.lovinBanner()
+            banner.loadAd()
+            withContext(Dispatchers.Main){
+                adView.addView(banner)
+            }
+        }
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         activityLoginIvBack.click {
             onBackPressed()

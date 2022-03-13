@@ -1,6 +1,7 @@
 package win.enlarge.zoovpn.holder
 
 import android.app.Activity
+import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -12,7 +13,9 @@ import org.greenrobot.eventbus.EventBus
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.event.MessageEvent
 import win.enlarge.zoovpn.pojo.ResourceEntity
+import win.enlarge.zoovpn.ui.activity.LoginActivity
 import win.enlarge.zoovpn.utils.ResourceManager
+import win.enlarge.zoovpn.utils.isLogin
 import win.enlarge.zoovpn.utils.loadWith
 import zhan.auto_adapter.AutoHolder
 import kotlin.random.Random
@@ -30,9 +33,13 @@ class LocationHolder(itemView:View?,dataMap: MutableMap<String, Any>?):AutoHolde
         val index = (0..3).random()
         locationItemSignal.setBackgroundResource(ResourceManager.signals[index])
         itemRoot.setOnClickListener {
-            MMKV.defaultMMKV().encode("location",p1)
-            EventBus.getDefault().post(MessageEvent("location", p1))
-            (itemView.context as Activity).finish()
+            if (isLogin){
+                MMKV.defaultMMKV().encode("location",p1)
+                EventBus.getDefault().post(MessageEvent("location", p1))
+                (itemView.context as Activity).finish()
+            }else{
+                itemView.context.startActivity(Intent(itemView.context, LoginActivity::class.java))
+            }
         }
     }
 }

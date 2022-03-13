@@ -19,29 +19,56 @@ import com.applovin.mediation.MaxAd
 import com.applovin.mediation.MaxAdListener
 import com.applovin.mediation.MaxError
 import com.applovin.mediation.ads.MaxInterstitialAd
+import com.applovin.mediation.nativeAds.MaxNativeAdListener
+import com.applovin.mediation.nativeAds.MaxNativeAdView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
+import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
+import win.enlarge.zoovpn.event.MessageEvent
 import win.enlarge.zoovpn.utils.*
+import kotlin.jvm.internal.Reflection
 
 abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
 
     private var isBackground = false
     private var lovinInterstitialAd: MaxInterstitialAd? = null
-    private var topOnInterstitialAd: ATInterstitial? = null
     private var openAd: ATSplashAd? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //用Lovin的插屏
-        createLovinInterstitialAd()
-        //用TopOn的插屏
-//        createTopOnInterstitialAd()
-        createOpenAd()
+        openAd = App.instance!!.openAd(openAdListener())
+        openAd.loge("xxxxxxHopenAd")
+        openAd!!.loadAd()
+
+        lovinInterstitialAd = App.instance!!.lovinInterstitialAd(this)
+        lovinInterstitialAd.loge("xxxxxxHlovinInsert")
+        lovinInterstitialAd!!.setListener(lovinInsterListener())
+        lovinInterstitialAd!!.loadAd()
+
         onConvert()
+    }
+
+    fun getLovinNativeAdView(){
+        val lovinLoader = App.instance!!.lovinNative()
+        lovinLoader.loadAd()
+        lovinLoader.setNativeAdListener(object :MaxNativeAdListener(){
+            override fun onNativeAdLoaded(p0: MaxNativeAdView?, p1: MaxAd?) {
+                super.onNativeAdLoaded(p0, p1)
+                "$p0 $p1".loge("xxxxxxHonNativeAdLoaded")
+                p0?.let {
+                    EventBus.getDefault().post(MessageEvent("onNativeAdLoaded",it))
+                }
+            }
+
+            override fun onNativeAdLoadFailed(p0: String?, p1: MaxError?) {
+                super.onNativeAdLoadFailed(p0, p1)
+                "$p0 $p1".loge("xxxxxxHonNativeAdLoadFailed")
+            }
+        })
     }
 
     abstract fun onConvert()
@@ -91,160 +118,6 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
         }
     }
 
-    private fun createOpenAd(offset: Long = 0L) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (offset > 0) {
-                delay(offset)
-            }
-            withContext(Dispatchers.Main) {
-                openAd?.onDestory()
-                openAd = openAdCreator()
-            }
-        }
-    }
-
-    private fun createLovinInterstitialAd(offset: Long = 0L) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (offset > 0) {
-                delay(offset)
-            }
-            withContext(Dispatchers.Main) {
-                lovinInterstitialAd?.destroy()
-                lovinInterstitialAd = lovinInterstitialAdCreator()
-            }
-        }
-    }
-
-    private fun lovinInterstitialAdCreator() =
-        MaxInterstitialAd(getString(R.string.lovin_insert_ad_id), lovinSdk, this).apply {
-            "MaxInterstitialAd lovinInterstitialAdCreator".loge()
-            setListener(object : MaxAdListener {
-                override fun onAdLoaded(ad: MaxAd?) {
-                    "MaxInterstitialAd onAdLoaded".loge()
-                }
-
-                override fun onAdDisplayed(ad: MaxAd?) {
-                    "MaxInterstitialAd onAdDisplayed".loge()
-                }
-
-                override fun onAdHidden(ad: MaxAd?) {
-                    "MaxInterstitialAd onAdHidden".loge()
-                    adLastTime = System.currentTimeMillis()
-                    createLovinInterstitialAd()
-                    onInterstitialAdHidden()
-                }
-
-                override fun onAdClicked(ad: MaxAd?) {
-                    "MaxInterstitialAd onAdClicked".loge()
-                }
-
-                override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
-                    "MaxInterstitialAd onAdLoadFailed $adUnitId $error".loge()
-                    createLovinInterstitialAd(3000)
-                }
-
-                override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
-                    "MaxInterstitialAd onAdDisplayFailed $ad $error".loge()
-                    createLovinInterstitialAd(3000)
-                }
-            })
-            loadAd()
-        }
-
-    private fun createTopOnInterstitialAd(offset: Long = 0L) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (offset > 0) {
-                delay(offset)
-            }
-//            withContext(Dispatchers.Main) {
-//                topOnInterstitialAd = topOnInterstitialAdCreator()
-//            }
-        }
-    }
-
-//    private fun topOnInterstitialAdCreator() =
-//        ATInterstitial(this, app.getString(R.string.top_on_insert_ad_id)).apply {
-//            setAdListener(object : ATInterstitialExListener {
-//                override fun onInterstitialAdLoaded() {
-//                    "topOnInterstitialAd onInterstitialAdLoaded".loge()
-//                }
-//
-//                override fun onInterstitialAdLoadFail(p0: AdError?) {
-//                    "topOnInterstitialAd onInterstitialAdLoadFail $p0".loge()
-//                    createTopOnInterstitialAd(3000)
-//                }
-//
-//                override fun onInterstitialAdClicked(p0: ATAdInfo?) {
-//                    "topOnInterstitialAd onInterstitialAdClicked $p0".loge()
-//                }
-//
-//                override fun onInterstitialAdShow(p0: ATAdInfo?) {
-//                    "topOnInterstitialAd onInterstitialAdShow $p0".loge()
-//                }
-//
-//                override fun onInterstitialAdClose(p0: ATAdInfo?) {
-//                    "topOnInterstitialAd onInterstitialAdClose $p0".loge()
-//                    adLastTime = System.currentTimeMillis()
-//                    createTopOnInterstitialAd()
-//                    onInterstitialAdHidden()
-//                }
-//
-//                override fun onInterstitialAdVideoStart(p0: ATAdInfo?) {
-//                    "topOnInterstitialAd onInterstitialAdVideoStart $p0".loge()
-//                }
-//
-//                override fun onInterstitialAdVideoEnd(p0: ATAdInfo?) {
-//                    "topOnInterstitialAd onInterstitialAdVideoEnd $p0".loge()
-//                }
-//
-//                override fun onInterstitialAdVideoError(p0: AdError?) {
-//                    "topOnInterstitialAd onInterstitialAdVideoError $p0".loge()
-//                    createTopOnInterstitialAd(3000)
-//                }
-//
-//                override fun onDeeplinkCallback(p0: ATAdInfo?, p1: Boolean) {
-//                    "topOnInterstitialAd onDeeplinkCallback $p0".loge()
-//                }
-//            })
-//            load()
-//        }
-
-
-    private fun openAdCreator() =
-        ATSplashAd(this, getString(R.string.top_on_open_ad_id), null, object : ATSplashAdListener {
-            override fun onAdLoaded() {
-                Log.e("openAdCreator", "onAdLoaded")
-            }
-
-            override fun onNoAdError(p0: AdError?) {
-                Log.e("openAdCreator", "onNoAdError $p0")
-                createOpenAd(3000)
-            }
-
-            override fun onAdShow(p0: ATAdInfo?) {
-                Log.e("openAdCreator", "onAdShow $p0")
-            }
-
-            override fun onAdClick(p0: ATAdInfo?) {
-                Log.e("openAdCreator", "onAdClick")
-            }
-
-            override fun onAdDismiss(p0: ATAdInfo?, p1: IATSplashEyeAd?) {
-                Log.e("openAdCreator", "onAdDismiss")
-                onSplashAdHidden()
-                createOpenAd()
-
-            }
-        }, 5000).apply {
-            setLocalExtra(
-                mutableMapOf<String, Any>(
-                    ATAdConst.KEY.AD_WIDTH to globalWidth,
-                    ATAdConst.KEY.AD_HEIGHT to (globalHeight * 0.85).toInt()
-                )
-            )
-            loadAd()
-        }
-
     fun showOpenAdImpl(viewGroup: ViewGroup, tag: String = ""): Boolean {
         openAd?.let {
             if (it.isAdReady) {
@@ -263,15 +136,8 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
                 return true
             }
         }
-        topOnInterstitialAd?.let {
-            if (it.isAdReady) {
-                it.show(this)
-                return true
-            }
-        }
         return false
     }
-
 
     fun showOpenAd(viewGroup: ViewGroup, tag: String = "", isForce: Boolean = false): Boolean {
         if (configEntity.isOpenAdReplacedByInsertAd()) {
@@ -303,4 +169,73 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
             return false
         }
     }
+
+    inner class openAdListener:ATSplashAdListener{
+        override fun onAdLoaded() {
+            "onAdLoaded".loge("xxxxxxHopenAdonAdLoaded")
+        }
+
+        override fun onNoAdError(p0: AdError?) {
+            "$p0".loge("xxxxxxHopenAdonNoAdError")
+            lifecycleScope.launch(Dispatchers.IO){
+                delay(3000)
+                openAd?.onDestory()
+                openAd = App.instance!!.openAd(this@openAdListener)
+                openAd?.loadAd()
+            }
+        }
+
+        override fun onAdShow(p0: ATAdInfo?) {
+            "onAdShow".loge("xxxxxxHopenAdonAdShow")
+        }
+
+        override fun onAdClick(p0: ATAdInfo?) {
+            "onAdClick".loge("xxxxxxHopenAdonAdClick")
+        }
+
+        override fun onAdDismiss(p0: ATAdInfo?, p1: IATSplashEyeAd?) {
+            "onAdDismiss".loge("xxxxxxHopenAdonAdDismiss")
+        }
+    }
+
+    inner class lovinInsterListener:MaxAdListener{
+        override fun onAdLoaded(ad: MaxAd?) {
+            "onAdLoaded".loge("xxxxxxHlovinonAdLoaded")
+        }
+
+        override fun onAdDisplayed(ad: MaxAd?) {
+            "onAdDisplayed".loge("xxxxxxHlovinonAdDisplayed")
+        }
+
+        override fun onAdHidden(ad: MaxAd?) {
+            "onAdHidden".loge("xxxxxxHlovinonAdHidden")
+        }
+
+        override fun onAdClicked(ad: MaxAd?) {
+            "onAdClicked".loge("xxxxxxHlovinonAdClicked")
+        }
+
+        override fun onAdLoadFailed(adUnitId: String?, error: MaxError?) {
+            "onAdLoadFailed".loge("xxxxxxHlovinonAdLoadFailed")
+            lifecycleScope.launch(Dispatchers.IO){
+                lovinInterstitialAd?.destroy()
+                delay(3000)
+                lovinInterstitialAd = App.instance!!.lovinInterstitialAd(this@BaseActivity)
+                lovinInterstitialAd!!.setListener(this@lovinInsterListener)
+                lovinInterstitialAd!!.loadAd()
+            }
+        }
+
+        override fun onAdDisplayFailed(ad: MaxAd?, error: MaxError?) {
+            "lovin onAdDisplayFailed".loge("xxxxxxHonAdDisplayFailed")
+            lifecycleScope.launch(Dispatchers.IO){
+                lovinInterstitialAd?.destroy()
+                delay(3000)
+                lovinInterstitialAd = App.instance!!.lovinInterstitialAd(this@BaseActivity)
+                lovinInterstitialAd!!.setListener(this@lovinInsterListener)
+                lovinInterstitialAd!!.loadAd()
+            }
+        }
+    }
+
 }

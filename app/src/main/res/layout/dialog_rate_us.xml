@@ -3,6 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/dialog_exit_bg"
     >
 
     <View
@@ -53,6 +54,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="26dp"
+        android:progressTint="@color/white"
+        android:progressBackgroundTint="@color/color_yellow"
         android:numStars="5"/>
 
     <RelativeLayout
@@ -61,7 +64,7 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/yes"
+            android:id="@+id/no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/dialog_exit_cancel_bg"
@@ -72,11 +75,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/no"
+            android:id="@+id/tes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_toEndOf="@+id/yes"
+            android:layout_toEndOf="@+id/no"
             android:background="@drawable/dialog_exit_sure_bg"
             android:gravity="center"
             android:text="Sure"

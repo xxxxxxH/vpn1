@@ -16,6 +16,8 @@ buildscript {
         maven {url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea"}
         //Ironsource
         maven {url "https://android-sdk.is.com/"}
+        //Tapjoy
+        maven {url "https://sdk.tapjoy.com/"}
     }
 
     dependencies {
@@ -43,6 +45,8 @@ allprojects {
         maven {url "https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea"}
         //Ironsource
         maven {url "https://android-sdk.is.com/"}
+        //Tapjoy
+        maven {url "https://sdk.tapjoy.com/"}
     }
 }
 

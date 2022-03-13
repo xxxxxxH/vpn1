@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.tencent.mmkv.MMKV
 import es.dmoral.toasty.Toasty
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_main_content.*
 import kotlinx.android.synthetic.main.layout_main_top.*
 import kotlinx.coroutines.*
@@ -18,10 +19,12 @@ import kotlinx.coroutines.flow.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
 import win.enlarge.zoovpn.event.MessageEvent
 import win.enlarge.zoovpn.pojo.ResourceEntity
+import win.enlarge.zoovpn.ui.dialog.DisconnectDialog
 import win.enlarge.zoovpn.ui.dialog.ExitDialog
 import win.enlarge.zoovpn.utils.requestPermission
 import win.enlarge.zoovpn.utils.timeOffset
@@ -34,7 +37,11 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
     }
 
     private val exitDialog by lazy {
-        ExitDialog(this)
+        ExitDialog(this, this)
+    }
+
+    private val disconnectDialog by lazy {
+        DisconnectDialog(this,this)
     }
 
     private var countDownJob: Job? = null
@@ -45,6 +52,16 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
         mainLocationRl.setOnClickListener(this)
         mainTopOption.setOnClickListener(this)
         requestPermission {
+            lifecycleScope.launch(Dispatchers.IO){
+                getLovinNativeAdView()
+                val banner = App.instance!!.lovinBanner()
+                banner.loadAd()
+                withContext(Dispatchers.Main){
+                    if (lovinBannerAdViewFl.childCount == 0){
+                        lovinBannerAdViewFl.addView(banner)
+                    }
+                }
+            }
             setStatus(STATUS.DEFAULT)
             entity?.let {
                 setLocation(it)
@@ -103,15 +120,17 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.mainOptionRl -> {
-                if (entity == null) {
-                    Toasty.error(this, "please node").show()
-                } else {
-                    setStatus(STATUS.ING)
+                val a = showInsertAd()
+                if (!a) {
+                    if (entity == null) {
+                        Toasty.error(this, "please select a node").show()
+                    } else {
+                        setStatus(STATUS.ING)
+                    }
                 }
-
             }
             R.id.mainStatusIcon -> {
-                setStatus(STATUS.DEFAULT)
+                disconnectDialog.show()
             }
             R.id.mainLocationRl -> {
                 startActivity(Intent(this, ServerActivity::class.java))
@@ -168,6 +187,18 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
             }
             "cancelExit" -> {
                 exitDialog.dismiss()
+            }
+            "disconnectConfirm" -> {
+                setStatus(STATUS.DEFAULT)
+                disconnectDialog.dismiss()
+            }
+            "disconnectCancel" -> {
+                disconnectDialog.dismiss()
+            }
+            "onNativeAdLoaded" -> {
+                if (lovinNativeAdViewFl.childCount == 0){
+                    lovinNativeAdViewFl.addView(msg[1] as View)
+                }
             }
         }
 

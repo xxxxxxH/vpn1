@@ -9,8 +9,8 @@
         android:id="@+id/mainLocationRl"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
         android:background="@drawable/main_select"
         android:contentDescription="location">
@@ -18,28 +18,28 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="24dp"
             android:src="@drawable/arrow_r" />
 
 
         <TextView
             android:id="@+id/mainLocationTv"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Select  Location"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <com.shehuan.niv.NiceImageView
             android:id="@+id/mainLocationFlagIv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="10dp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
             android:scaleType="centerCrop"
             android:visibility="gone"
             app:corner_radius="10dp"
@@ -50,6 +50,8 @@
         android:id="@+id/mainContentStatus"
         android:layout_width="match_parent"
         android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:layout_centerInParent="true"
         android:layout_height="wrap_content"/>
 
@@ -57,11 +59,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
-        android:layout_alignParentBottom="true"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/main_select">
 
         <ImageView

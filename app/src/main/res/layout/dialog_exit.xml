@@ -14,8 +14,8 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_centerVertical="true"
+            android:gravity="center"
             android:text="Are you sure to disconnect ?"
             android:textColor="#000"
             android:textSize="15sp"
@@ -31,7 +31,7 @@
     </RelativeLayout>
 
 
-    <win.enlarge.zoovpn.view.lovin.LovinNativeAdView
+    <FrameLayout
         android:id="@+id/nad"
         android:layout_width="match_parent"
         android:layout_height="150dp" />
@@ -42,7 +42,7 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/yes"
+            android:id="@+id/no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/dialog_exit_cancel_bg"
@@ -53,11 +53,11 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/no"
+            android:id="@+id/yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_toEndOf="@+id/yes"
+            android:layout_toEndOf="@+id/no"
             android:background="@drawable/dialog_exit_sure_bg"
             android:gravity="center"
             android:text="Sure"

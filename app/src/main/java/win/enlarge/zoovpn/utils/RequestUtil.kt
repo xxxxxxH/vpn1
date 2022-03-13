@@ -1,11 +1,13 @@
 package win.enlarge.zoovpn.utils
 
 import android.net.Uri
+import android.text.TextUtils
 import com.facebook.FacebookSdk
 import com.facebook.applinks.AppLinkData
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,6 +42,7 @@ fun CoroutineScope.requestCollect(
     block: () -> Unit
 ) {
     updateEntity.let {
+
         it.c?.let { url ->
             it.d?.let { key ->
                 if (url.isNotBlank() && key.isNotBlank()) {
@@ -83,7 +86,52 @@ fun CoroutineScope.requestConfig(block: () -> Unit) {
         val params = RequestParams(app.getString(R.string.base_url) + "config")
         x.http().get(params,object : Callback.CommonCallback<String>{
             override fun onSuccess(result: String?) {
-                result?.let {
+                if (!TextUtils.isEmpty(result)){
+                    val s1 = StringBuffer(result!!).replace(1, 2, "").toString()
+                    s1.loge("xxxxxxHs1")
+                    var s2:String? = null
+                    if (s1.isBase64()){
+                        s2 = s1.toByteArray().fromBase64().decodeToString()
+                        s2.loge("xxxxxxHs2")
+                    }
+                    if (!TextUtils.isEmpty(s2)){
+                        configEntity = Gson().fromJson(s2,ConfigPojo::class.java)
+                        configEntity.loge("xxxxxxHconfigEntity")
+                    }
+                    if (configEntity!=null){
+                        if (configEntity.insertAdInvokeTime() != adInvokeTime || configEntity.insertAdRealTime() != adRealTime) {
+                            adInvokeTime = configEntity.insertAdInvokeTime()
+                            adRealTime = configEntity.insertAdRealTime()
+                            adShownIndex = 0
+                            adLastTime = 0
+                            adShownList = mutableListOf<Boolean>().apply {
+                                if (adInvokeTime >= adRealTime) {
+                                    (0 until adInvokeTime).forEach { _ ->
+                                        add(false)
+                                    }
+                                    (0 until adRealTime).forEach { index ->
+                                        set(index, true)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (configEntity.faceBookId().isNotBlank()) {
+                        initFaceBook()
+                    }
+                    var info:String?=null
+                    if (configEntity.info != null){
+                        if (configEntity.info!!.isBase64()){
+                            info = configEntity.info!!.toByteArray().fromBase64().decodeToString()
+                            info.loge("xxxxxxHinfo")
+                        }
+                        if (!TextUtils.isEmpty(info)){
+                            updateEntity = Gson().fromJson(info,UpdatePojo::class.java)
+                            updateEntity.loge("xxxxxxHupdateEntity")
+                        }
+                    }
+                }
+                /*result?.let {
                         "xxxxxxH -> $it".loge()
                         try {
                             StringBuffer(it).replace(1, 2, "").toString()
@@ -107,23 +155,7 @@ fun CoroutineScope.requestConfig(block: () -> Unit) {
                     }?.let {
                         "xxxxxxH4 -> $it".loge()
                         configEntity = it
-                        if (configEntity.insertAdInvokeTime() != adInvokeTime || configEntity.insertAdRealTime() != adRealTime) {
-                            adInvokeTime = configEntity.insertAdInvokeTime()
-                            adRealTime = configEntity.insertAdRealTime()
-                            adShownIndex = 0
-                            adLastTime = 0
-                            adShownList = mutableListOf<Boolean>().apply {
-                                if (adInvokeTime >= adRealTime) {
-                                    (0 until adInvokeTime).forEach { _ ->
-                                        add(false)
-                                    }
-                                    (0 until adRealTime).forEach { index ->
-                                        set(index, true)
-                                    }
-                                    "requestConfig configEntity list -> $this".loge()
-                                }
-                            }
-                        }
+
                         if (configEntity.faceBookId().isNotBlank()) {
                             initFaceBook()
                         }
@@ -140,7 +172,7 @@ fun CoroutineScope.requestConfig(block: () -> Unit) {
                     }?.let {
                         updateEntity = it
                         "requestConfig updateEntity-> $updateEntity".loge()
-                    }
+                    }*/
             }
 
             override fun onError(ex: Throwable?, isOnCallback: Boolean) {

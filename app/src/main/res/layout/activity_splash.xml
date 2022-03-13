@@ -29,12 +29,7 @@
             android:layout_gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
-
-            <win.enlarge.zoovpn.view.lovin.LovinNativeAdView
-                android:id="@+id/activitySplashNav"
-                android:layout_width="match_parent"
-                android:layout_height="300dp" />
-
+            
             <TextView
                 android:id="@+id/activitySplashTv"
                 android:layout_width="match_parent"
@@ -65,4 +60,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:src="@drawable/app_splash_facebook" />
+
+    <FrameLayout
+        android:id="@+id/adView"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 </RelativeLayout>

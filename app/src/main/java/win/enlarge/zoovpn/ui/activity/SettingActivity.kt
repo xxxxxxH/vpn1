@@ -3,13 +3,15 @@ package win.enlarge.zoovpn.ui.activity
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import kotlinx.android.synthetic.main.activity_setting.*
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_setting_new.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
-import win.enlarge.zoovpn.ui.dialog.RateDialog
 import win.enlarge.zoovpn.ui.dialog.RateUsDialog
-import win.enlarge.zoovpn.utils.click
 
 class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClickListener{
     
@@ -18,6 +20,15 @@ class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClic
     }
 
     override fun onConvert() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val banner = App.instance!!.lovinBanner()
+            banner.loadAd()
+            withContext(Dispatchers.Main){
+                if (adView.childCount == 0){
+                    adView.addView(banner)
+                }
+            }
+        }
         settingCloseIv.setOnClickListener(this)
         settingRateRl.setOnClickListener(this)
         settingAboutRl.setOnClickListener(this)
@@ -27,7 +38,7 @@ class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClic
     override fun onClick(v: View) {
         when(v.id){
             R.id.settingCloseIv -> {
-
+                finish()
             }
             R.id.settingRateRl -> {
                 rateDialog.show()
@@ -53,4 +64,5 @@ class SettingActivity : BaseActivity(R.layout.activity_setting_new) ,View.OnClic
         intent.putExtra(Intent.EXTRA_TEXT, text)
         startActivity(Intent.createChooser(intent, "Choose Email Client"))
     }
+
 }

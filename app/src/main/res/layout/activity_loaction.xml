@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1C1D21"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/locationTitleRl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="42dp">
@@ -30,7 +31,15 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_below="@+id/locationTitleRl"
         android:id="@+id/recycler"
+        android:layout_marginBottom="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-</LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="50dp"/>
+</RelativeLayout>

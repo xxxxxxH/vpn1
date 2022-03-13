@@ -13,7 +13,8 @@
 
         <include layout="@layout/layout_main_top" />
 
-        <win.enlarge.zoovpn.view.lovin.LovinNativeAdView
+        <FrameLayout
+            android:id="@+id/lovinNativeAdViewFl"
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:background="#A6A6A6" />
@@ -23,9 +24,9 @@
 
     </LinearLayout>
 
-    <win.enlarge.zoovpn.view.lovin.LovinBannerAdView
+    <FrameLayout
+        android:id="@+id/lovinBannerAdViewFl"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="#A6A6A6" />
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

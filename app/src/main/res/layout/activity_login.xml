@@ -42,6 +42,7 @@
             android:layout_height="match_parent" />
 
         <FrameLayout
+            android:visibility="gone"
             android:id="@+id/activityLoginFl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -69,15 +70,9 @@
     </FrameLayout>
 
     <FrameLayout
+        android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom">
-
-        <win.enlarge.zoovpn.view.lovin.LovinBannerAdView
-            android:id="@+id/loginAd"
-            android:layout_width="match_parent"
-            android:layout_height="50dp" />
-    </FrameLayout>
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
