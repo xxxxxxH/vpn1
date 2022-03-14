@@ -127,6 +127,7 @@ dependencies {
     implementation 'com.flyco.dialog:FlycoDialog_Lib:1.2.2@aar'
     implementation 'com.flyco.animation:FlycoAnimation_Lib:1.0.0@aar'
     implementation 'com.nineoldandroids:library:2.4.0'
-    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.github.lzyzsd:jsbridge:1.0.4'
+    implementation 'com.lzy.net:okgo:3.0.4'
 
 }

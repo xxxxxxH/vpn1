@@ -75,7 +75,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tes"
+            android:id="@+id/yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"

