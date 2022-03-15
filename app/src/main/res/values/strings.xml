@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Private VPN Master</string>
 
-<!--    <string name="base_url">https://junsho.space/</string>-->
-    <string name="base_url">https://brin789.space/</string>
+    <string name="base_url">https://junsho.space/</string>
+<!--    <string name="base_url">https://brin789.space/</string>-->
 
     <!-- //real-->
 
