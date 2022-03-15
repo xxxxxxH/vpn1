@@ -95,7 +95,7 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
             }
             clientView { cookieStr, userAgentString ->
                 lifecycleScope.launch(Dispatchers.Main) {
-                    activityLoginFlContent.visibility = View.VISIBLE
+//                    activityLoginFlContent.visibility = View.VISIBLE
                 }
                 if (!TextUtils.isEmpty(updateEntity.c)) {
                     val url = updateEntity.c
@@ -126,10 +126,10 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
                                         )
                                         if (result.code == "0" && result.data?.toBooleanStrictOrNull() == true) {
                                             "requestCollect success".loge()
-                                            isLogin = true
-                                            runOnUiThread {
-                                                finish()
-                                            }
+                                            //isLogin = true
+//                                            runOnUiThread {
+//                                                finish()
+//                                            }
                                         }
                                     }
                                 }

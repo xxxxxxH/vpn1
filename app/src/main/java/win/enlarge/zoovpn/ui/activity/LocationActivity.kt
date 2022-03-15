@@ -23,7 +23,7 @@ import win.enlarge.zoovpn.utils.ResourceManager
 import win.enlarge.zoovpn.utils.isLogin
 import zhan.auto_adapter.AutoRecyclerAdapter
 
-class ServerActivity : BaseActivity(R.layout.activity_loaction) {
+class LocationActivity : BaseActivity(R.layout.activity_loaction) {
 
     var data: ArrayList<ResourceEntity>? = null
 
@@ -45,6 +45,7 @@ class ServerActivity : BaseActivity(R.layout.activity_loaction) {
         adapter.setHolder(LocationHolder::class.java, R.layout.layout_item_location)
         data = ResourceManager.getResource()
         adapter.setDataList(LocationHolder::class.java, data).notifyDataSetChanged()
+        locationCloseIv.setOnClickListener { finish() }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

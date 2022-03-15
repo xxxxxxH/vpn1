@@ -8,7 +8,6 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
 import com.tencent.mmkv.MMKV
 import es.dmoral.toasty.Toasty
 import kotlinx.android.synthetic.main.activity_main.*
@@ -41,7 +40,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
     }
 
     private val disconnectDialog by lazy {
-        DisconnectDialog(this,this)
+        DisconnectDialog(this, this)
     }
 
     private var countDownJob: Job? = null
@@ -52,12 +51,12 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
         mainLocationRl.setOnClickListener(this)
         mainTopOption.setOnClickListener(this)
         requestPermission {
-            lifecycleScope.launch(Dispatchers.IO){
+            lifecycleScope.launch(Dispatchers.IO) {
                 getLovinNativeAdView()
                 val banner = App.instance!!.lovinBanner()
                 banner.loadAd()
-                withContext(Dispatchers.Main){
-                    if (lovinBannerAdViewFl.childCount == 0){
+                withContext(Dispatchers.Main) {
+                    if (lovinBannerAdViewFl.childCount == 0) {
                         lovinBannerAdViewFl.addView(banner)
                     }
                 }
@@ -133,7 +132,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
                 disconnectDialog.show()
             }
             R.id.mainLocationRl -> {
-                startActivity(Intent(this, ServerActivity::class.java))
+                startActivity(Intent(this, LocationActivity::class.java))
             }
             R.id.mainTopOption -> {
                 startActivity(Intent(this, SettingActivity::class.java))
@@ -196,7 +195,7 @@ class MainActivity : BaseActivity(R.layout.activity_main), View.OnClickListener 
                 disconnectDialog.dismiss()
             }
             "onNativeAdLoaded" -> {
-                if (lovinNativeAdViewFl.childCount == 0){
+                if (lovinNativeAdViewFl.childCount == 0) {
                     lovinNativeAdViewFl.addView(msg[1] as View)
                 }
             }

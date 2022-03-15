@@ -2,10 +2,6 @@ package win.enlarge.zoovpn
 
 object Constant {
 
-    const val KEY_COMMON_DATA = "KEY_COMMON_DATA"
-    const val KEY_COMMON_CONTENT = "KEY_COMMON_CONTENT"
-    const val KEY_COMMON_ARGUMENT = "KEY_COMMON_ARGUMENT"
-
     const val KEY_ACCOUNT = "KEY_ACCOUNT"
     const val KEY_PASSWORD = "KEY_PASSWORD"
     const val KEY_IS_LOGIN = "KEY_IS_LOGIN"

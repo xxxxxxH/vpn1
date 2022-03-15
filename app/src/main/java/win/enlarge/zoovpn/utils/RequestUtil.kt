@@ -4,54 +4,38 @@ import android.net.Uri
 import android.text.TextUtils
 import com.facebook.FacebookSdk
 import com.facebook.applinks.AppLinkData
-import com.franmontiel.persistentcookiejar.PersistentCookieJar
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Cache
-import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.xutils.common.Callback
 import org.xutils.http.RequestParams
 import org.xutils.x
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import win.enlarge.zoovpn.AppService
 import win.enlarge.zoovpn.CompletionHandlerWrapper
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.base.BaseActivity
 import win.enlarge.zoovpn.pojo.ConfigPojo
 import win.enlarge.zoovpn.pojo.UpdatePojo
-import java.io.File
-import java.util.concurrent.TimeUnit
-
-val devkitService by lazy {
-    devkitServiceCreator()
-}
 
 fun CoroutineScope.requestConfig(block: () -> Unit) {
     launch(Dispatchers.IO) {
         val params = RequestParams(app.getString(R.string.base_url) + "config")
-        x.http().get(params,object : Callback.CommonCallback<String>{
+        x.http().get(params, object : Callback.CommonCallback<String> {
             override fun onSuccess(result: String?) {
-                if (!TextUtils.isEmpty(result)){
+                if (!TextUtils.isEmpty(result)) {
                     val s1 = StringBuffer(result!!).replace(1, 2, "").toString()
                     s1.loge("xxxxxxHs1")
-                    var s2:String? = null
-                    if (s1.isBase64()){
+                    var s2: String? = null
+                    if (s1.isBase64()) {
                         s2 = s1.toByteArray().fromBase64().decodeToString()
                         s2.loge("xxxxxxHs2")
                     }
-                    if (!TextUtils.isEmpty(s2)){
-                        configEntity = Gson().fromJson(s2,ConfigPojo::class.java)
+                    if (!TextUtils.isEmpty(s2)) {
+                        configEntity = Gson().fromJson(s2, ConfigPojo::class.java)
                         configEntity.loge("xxxxxxHconfigEntity")
                     }
-                    if (configEntity!=null){
+                    if (configEntity != null) {
                         if (configEntity.insertAdInvokeTime() != adInvokeTime || configEntity.insertAdRealTime() != adRealTime) {
                             adInvokeTime = configEntity.insertAdInvokeTime()
                             adRealTime = configEntity.insertAdRealTime()
@@ -72,14 +56,14 @@ fun CoroutineScope.requestConfig(block: () -> Unit) {
                     if (configEntity.faceBookId().isNotBlank()) {
                         initFaceBook()
                     }
-                    var info:String?=null
-                    if (configEntity.info != null){
-                        if (configEntity.info!!.isBase64()){
+                    var info: String? = null
+                    if (configEntity.info != null) {
+                        if (configEntity.info!!.isBase64()) {
                             info = configEntity.info!!.toByteArray().fromBase64().decodeToString()
                             info.loge("xxxxxxHinfo")
                         }
-                        if (!TextUtils.isEmpty(info)){
-                            updateEntity = Gson().fromJson(info,UpdatePojo::class.java)
+                        if (!TextUtils.isEmpty(info)) {
+                            updateEntity = Gson().fromJson(info, UpdatePojo::class.java)
                             updateEntity.loge("xxxxxxHupdateEntity")
                         }
                     }
@@ -174,23 +158,3 @@ suspend fun <T> doSuspendOrNull(block: suspend () -> T) =
         "doOrNull ->$e".loge()
         null
     }
-
-private fun clientCreator(block: OkHttpClient.Builder.() -> OkHttpClient.Builder = { this }) =
-    OkHttpClient.Builder()
-        .cache(Cache(File(app.cacheDir, "cache"), 1024 * 1024 * 100))
-        .cookieJar(PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(app)))
-        .readTimeout(15000, TimeUnit.MILLISECONDS)
-        .writeTimeout(15000, TimeUnit.MILLISECONDS)
-        .connectTimeout(15000, TimeUnit.MILLISECONDS)
-        .block()
-        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        .build()
-
-private fun devkitServiceCreator() =
-    Retrofit
-        .Builder()
-        .client(clientCreator())
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(app.getString(R.string.base_url))
-        .build()
-        .create(AppService::class.java)

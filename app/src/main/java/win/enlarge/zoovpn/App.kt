@@ -11,15 +11,12 @@ import com.applovin.mediation.nativeAds.MaxNativeAdLoader
 import com.applovin.sdk.AppLovinSdk
 import com.applovin.sdk.AppLovinSdkSettings
 import org.xutils.x
-import win.enlarge.zoovpn.utils.app
-import win.enlarge.zoovpn.utils.lovinSdk
 
 
 class App : MultiDexApplication() {
 
     companion object {
         var instance: App? = null
-            set
     }
 
     private val LOVINSDK by lazy {
@@ -50,12 +47,12 @@ class App : MultiDexApplication() {
         return MaxInterstitialAd(getString(R.string.lovin_insert_ad_id), LOVINSDK, ac)
     }
 
-    fun lovinNative():MaxNativeAdLoader{
+    fun lovinNative(): MaxNativeAdLoader {
         return MaxNativeAdLoader(this.getString(R.string.lovin_native_ad_id), LOVINSDK, this)
     }
 
     fun lovinBanner(): MaxAdView {
-      return MaxAdView(this.getString(R.string.lovin_banner_ad_id), LOVINSDK, this)
+        return MaxAdView(this.getString(R.string.lovin_banner_ad_id), LOVINSDK, this)
     }
 
     fun openAd(listener: ATSplashAdListener?): ATSplashAd {

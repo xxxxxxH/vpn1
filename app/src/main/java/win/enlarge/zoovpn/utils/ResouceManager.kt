@@ -1,6 +1,5 @@
 package win.enlarge.zoovpn.utils
 
-import android.content.Context
 import win.enlarge.zoovpn.R
 import win.enlarge.zoovpn.pojo.ResourceEntity
 

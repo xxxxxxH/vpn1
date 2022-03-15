@@ -77,20 +77,6 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
 
     open fun onSplashAdHidden() {}
 
-    fun registerEventBus() {
-        object : BaseLifeCycleObserver {
-            override fun onCreate(owner: LifecycleOwner) {
-                super.onCreate(owner)
-                EventBus.getDefault().register(this@BaseActivity)
-            }
-
-            override fun onDestroy(owner: LifecycleOwner) {
-                super.onDestroy(owner)
-                EventBus.getDefault().unregister(this@BaseActivity)
-            }
-        }.bindWithLifecycle(this)
-    }
-
     //要不要闪屏
     override fun onStop() {
         super.onStop()
