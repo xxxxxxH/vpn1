@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         //real
-//        applicationId "win.enlarge.zoovpn"
+//        applicationId "net.masvate.vpnpri"
         //test
         applicationId "nuuu.huju.bbbn"
         minSdkVersion 21
